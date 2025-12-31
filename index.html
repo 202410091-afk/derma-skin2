@@ -3,57 +3,151 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai-Derma | فحص الجلد الذكي</title>
+    <title>Ai-Derma Premium | الفحص الذكي</title>
     <style>
-        :root { --success: #27ae60; --dark: #2c3e50; --bg: #f5f6fa; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .app-container { background: white; width: 90%; max-width: 400px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; text-align: center; }
-        .header h1 { color: var(--dark); margin: 0; font-size: 24px; letter-spacing: -1px; }
-        #status { font-size: 14px; color: #95a5a6; margin: 10px 0; }
-        
-        #video-container { width: 100%; aspect-ratio: 1/1; border-radius: 20px; overflow: hidden; margin-bottom: 20px; background: #000; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        
-        .btn-scan { background: var(--dark); color: white; border: none; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        .btn-scan:disabled { background: #dcdde1; color: #7f8c8d; }
-        
-        /* تصميم النتائج الجديد */
-        #result-area { margin-top: 20px; display: none; }
-        .result-title { font-size: 14px; color: #7f8c8d; margin-bottom: 10px; display: block; }
-        .result-tag { 
-            display: inline-block; 
-            background-color: #eafaf1; 
-            color: var(--success); 
-            padding: 10px 20px; 
-            border-radius: 50px; 
-            font-size: 20px; 
-            font-weight: bold; 
-            border: 2px solid var(--success);
-            margin: 5px;
-            animation: fadeIn 0.5s ease;
+        :root {
+            --glass: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --accent: #2ecc71;
+            --text-dark: #1a1a1a;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+        }
+
+        .premium-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            width: 90%;
+            max-width: 420px;
+            border-radius: 35px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        .logo-section h1 {
+            font-size: 28px;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        #status-dot {
+            width: 8px;
+            height: 8px;
+            background: #ccc;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        #video-viewport {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 25px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+            margin-bottom: 25px;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scan-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        .scan-button:disabled {
+            filter: grayscale(1);
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        #result-display {
+            margin-top: 25px;
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .result-badge {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--accent);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            display: inline-block;
+            border: 2px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h1>🩺 Ai-Derma</h1>
-        <div id="status">جاري تشغيل النظام...</div>
+<div class="premium-card">
+    <div class="logo-section">
+        <h1>Ai-Derma Premium</h1>
+        <span class="status-text">
+            <span id="status-dot"></span>
+            <span id="status-label">جاري التحميل...</span>
+        </span>
     </div>
 
-    <div id="video-container">
+    <div id="video-viewport">
         <video id="webcam" autoplay muted playsinline></video>
     </div>
 
-    <button id="run-btn" class="btn-scan" disabled>انتظر التحميل...</button>
-    
-    <div id="result-area">
-        <span class="result-title">نتائج التحليل المكتشفة:</span>
-        <div id="tags-container">
-            </div>
+    <button id="main-btn" class="scan-button" disabled>ابدأ المسح الذكي</button>
+
+    <div id="result-display">
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">الحالة المكتشفة:</div>
+        <div id="tag-container"></div>
     </div>
 </div>
 
@@ -63,58 +157,61 @@
 <script>
     (async () => {
         const video = document.querySelector('#webcam');
-        const runBtn = document.querySelector('#run-btn');
-        const resultArea = document.querySelector('#result-area');
-        const tagsContainer = document.querySelector('#tags-container');
-        const status = document.querySelector('#status');
+        const btn = document.querySelector('#main-btn');
+        const resultDiv = document.querySelector('#result-display');
+        const tagContainer = document.querySelector('#tag-container');
+        const statusLabel = document.querySelector('#status-label');
+        const statusDot = document.querySelector('#status-dot');
 
         try {
             const classifier = new EdgeImpulseClassifier();
             await classifier.init();
             
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment', width: 640, height: 640 } 
+            });
             video.srcObject = stream;
 
-            status.textContent = "جاهز للفحص ✅";
-            runBtn.disabled = false;
-            runBtn.textContent = "تحليل حالة الجلد";
+            statusLabel.textContent = "النظام جاهز للعمل";
+            statusDot.style.background = "#2ecc71";
+            btn.disabled = false;
 
-            runBtn.onclick = async () => {
-                runBtn.textContent = "جاري الفحص...";
-                runBtn.disabled = true;
+            btn.onclick = async () => {
+                btn.textContent = "جاري التحليل الرقمي...";
+                btn.disabled = true;
 
-                const features = getFeaturesFromVideo(video);
+                const features = getFeatures(video);
                 const res = classifier.classify(features);
 
                 if (res.results && res.results.length > 0) {
-                    showTags(res.results);
+                    displayPremiumResults(res.results);
                 }
 
-                runBtn.disabled = false;
-                runBtn.textContent = "إعادة الفحص";
+                btn.disabled = false;
+                btn.textContent = "مسح جديد";
             };
 
         } catch (e) {
-            status.textContent = "خطأ: تأكد من الملفات والكاميرا";
+            statusLabel.textContent = "خطأ في التهيئة";
+            statusDot.style.background = "#e74c3c";
         }
 
-        function showTags(results) {
-            tagsContainer.innerHTML = "";
-            resultArea.style.display = "block";
+        function displayPremiumResults(results) {
+            tagContainer.innerHTML = "";
+            resultDiv.style.display = "block";
 
-            // فلترة النتائج: عرض الحالات التي اكتشفها الموديل فقط (بنسبة ثقة معقولة)
-            // قمت بضبطها لتظهر الحالات التي تزيد نسبتها عن 15% لتكون دقيقة
-            const detected = results.filter(r => r.value > 0.15).sort((a, b) => b.value - a.value);
+            // فلترة لعرض النتائج القوية فقط بدون أرقام
+            const detected = results.filter(r => r.value > 0.15).sort((a,b) => b.value - a.value);
 
             detected.forEach(item => {
-                const tag = document.createElement('span');
-                tag.className = 'result-tag';
-                tag.textContent = item.label; // اسم الحالة فقط بدون أرقام
-                tagsContainer.appendChild(tag);
+                const badge = document.createElement('div');
+                badge.className = 'result-badge';
+                badge.textContent = item.label;
+                tagContainer.appendChild(badge);
             });
         }
 
-        function getFeaturesFromVideo(v) {
+        function getFeatures(v) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 96; canvas.height = 96;
