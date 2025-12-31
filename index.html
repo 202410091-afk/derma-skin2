@@ -3,144 +3,81 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai-Derma  | AI Analysis</title>
+    <title>Ai-Derma Premium | Smart Diagnostics</title>
     <style>
         :root {
-            --glass: rgba(255, 255, 255, 0.92);
-            --primary-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            --accent: #00d2ff;
-            --success: #2ecc71;
-            --text-dark: #121212;
+            --glass: rgba(255, 255, 255, 0.95);
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --normal-green: #2ecc71;
+            --warning-red: #e74c3c;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--primary-gradient);
+            margin: 0; padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dark);
+            display: flex; align-items: center; justify-content: center;
         }
 
         .premium-card {
             background: var(--glass);
             backdrop-filter: blur(20px);
-            width: 90%;
-            max-width: 420px;
+            width: 90%; max-width: 420px;
             border-radius: 40px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
             padding: 35px;
-            border: 1px solid rgba(255,255,255,0.4);
             text-align: center;
-            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .header h1 {
-            font-size: 32px;
-            margin: 0;
-            background: linear-gradient(to right, #2c5364, #00d2ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-            letter-spacing: -1px;
+            font-size: 28px; margin: 0;
+            font-weight: 900; letter-spacing: -1px;
+            color: #0f172a;
         }
 
-        .status-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0 25px 0;
+        .status-box {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; margin: 10px 0 25px 0; font-size: 12px; font-weight: 600; color: #64748b;
         }
 
-        #status-dot {
-            width: 10px;
-            height: 10px;
-            background: #ff4757;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
-        }
-
-        .status-text {
-            font-size: 14px;
-            color: #57606f;
-            font-weight: 500;
-        }
+        #status-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
 
         #video-viewport {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 30px;
-            overflow: hidden;
-            background: #000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 3px solid #fff;
-            margin-bottom: 30px;
+            width: 100%; aspect-ratio: 1/1; border-radius: 30px;
+            overflow: hidden; background: #000;
+            border: 4px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .main-btn {
+            background: #0f172a; color: white; border: none;
+            padding: 20px; border-radius: 20px; font-size: 17px;
+            font-weight: 700; width: 100%; cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .main-button {
-            background: #121212;
-            color: white;
-            border: none;
-            padding: 22px;
-            border-radius: 24px;
-            font-size: 18px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 0.5px;
-        }
+        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .main-button:hover {
-            transform: scale(1.02);
-            background: #000;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
+        #result-display { margin-top: 30px; display: none; }
 
-        .main-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #result-display {
-            margin-top: 30px;
-            display: none;
-            animation: fadeIn 0.8s ease;
-        }
-
-        .result-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #888;
-            margin-bottom: 15px;
-        }
-
+        /* ستايل النتيجة الملونة */
         .result-badge {
-            background: var(--success);
-            color: white;
-            padding: 18px 30px;
+            padding: 20px 40px;
             border-radius: 25px;
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 26px;
+            font-weight: 900;
             display: inline-block;
-            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
-            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -148,9 +85,9 @@
 <div class="premium-card">
     <div class="header">
         <h1>AI-DERMA</h1>
-        <div class="status-container">
+        <div class="status-box">
             <div id="status-dot"></div>
-            <span id="status-label" class="status-text">INITIALIZING...</span>
+            <span id="status-label">INITIALIZING SYSTEM...</span>
         </div>
     </div>
 
@@ -158,10 +95,9 @@
         <video id="webcam" autoplay muted playsinline></video>
     </div>
 
-    <button id="scan-btn" class="main-button" disabled>START SMART SCAN</button>
+    <button id="scan-btn" class="main-btn" disabled>RUN DIAGNOSTIC</button>
 
     <div id="result-display">
-        <div class="result-title">ANALYSIS COMPLETE</div>
         <div id="tag-container"></div>
     </div>
 </div>
@@ -181,15 +117,11 @@
         try {
             const classifier = new EdgeImpulseClassifier();
             await classifier.init();
-            
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' } 
-            });
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             video.srcObject = stream;
 
             statusLabel.textContent = "SYSTEM READY";
             statusDot.style.background = "#2ecc71";
-            statusDot.style.boxShadow = "0 0 10px rgba(46, 204, 113, 0.6)";
             btn.disabled = false;
 
             btn.onclick = async () => {
@@ -200,31 +132,46 @@
                 const res = classifier.classify(features);
 
                 if (res.results && res.results.length > 0) {
-                    showResults(res.results);
+                    displaySmartResults(res.results);
                 }
 
                 btn.disabled = false;
-                btn.textContent = "RESCAN";
+                btn.textContent = "NEW SCAN";
             };
-
         } catch (e) {
-            statusLabel.textContent = "HARDWARE ERROR";
-            statusDot.style.background = "#ff4757";
+            statusLabel.textContent = "ERROR";
         }
 
-        function showResults(results) {
+        function displaySmartResults(results) {
             tagContainer.innerHTML = "";
             resultDiv.style.display = "block";
 
-            // Get top result only for ultra-clean look
+            // جلب النتيجة الأعلى
             const top = results.sort((a,b) => b.value - a.value)[0];
+            const label = top.label.toUpperCase();
+            const val = top.value; // القيمة من 0 إلى 1
 
-            if (top && top.value > 0.15) {
-                const badge = document.createElement('div');
-                badge.className = 'result-badge';
-                badge.textContent = top.label.toUpperCase();
-                tagContainer.appendChild(badge);
+            const badge = document.createElement('div');
+            badge.className = 'result-badge';
+            badge.textContent = label;
+
+            // منطق التلوين
+            if (label.includes("NORMAL") || label.includes("HEALTHY")) {
+                // اللون الأخضر للسلامة
+                badge.style.background = "#2ecc71";
+                badge.style.boxShadow = "0 10px 30px rgba(46, 204, 113, 0.4)";
+            } else {
+                // اللون الأحمر المتدرج حسب قيمة الـ Confidence
+                // نقوم بحساب درجة اللون الأحمر (كلما زاد val زاد الاحمرار)
+                const intensity = Math.round(val * 100);
+                badge.style.background = `linear-gradient(135deg, #ff4757 0%, #b33939 ${100 - intensity}%)`;
+                badge.style.boxShadow = `0 10px 30px rgba(231, 76, 60, ${val})`;
+                
+                // إضافة وميض بسيط إذا كانت الحالة خطيرة (قيمة عالية)
+                if(val > 0.8) badge.style.animation = "pulse 1.5s infinite";
             }
+
+            tagContainer.appendChild(badge);
         }
 
         function getFeatures(v) {
@@ -241,6 +188,14 @@
         }
     })();
 </script>
+
+<style>
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 15px 45px rgba(231, 76, 60, 0.6); }
+        100% { transform: scale(1); box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4); }
+    }
+</style>
 
 </body>
 </html>
