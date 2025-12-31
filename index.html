@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai-Derma Premium | الفحص الذكي</title>
+    <title>Ai-Derma  | AI Analysis</title>
     <style>
         :root {
-            --glass: rgba(255, 255, 255, 0.9);
-            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            --accent: #2ecc71;
-            --text-dark: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.92);
+            --primary-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --accent: #00d2ff;
+            --success: #2ecc71;
+            --text-dark: #121212;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--primary-gradient);
             min-height: 100vh;
             display: flex;
@@ -26,51 +27,58 @@
 
         .premium-card {
             background: var(--glass);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             width: 90%;
             max-width: 420px;
-            border-radius: 35px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 40px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+            padding: 35px;
+            border: 1px solid rgba(255,255,255,0.4);
             text-align: center;
+            position: relative;
         }
 
-        .logo-section h1 {
-            font-size: 28px;
+        .header h1 {
+            font-size: 32px;
             margin: 0;
-            background: var(--primary-gradient);
+            background: linear-gradient(to right, #2c5364, #00d2ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0 25px 0;
         }
 
         #status-dot {
-            width: 8px;
-            height: 8px;
-            background: #ccc;
+            width: 10px;
+            height: 10px;
+            background: #ff4757;
             border-radius: 50%;
-            display: inline-block;
-            margin-left: 8px;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
         }
 
         .status-text {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 20px;
-            display: block;
+            font-size: 14px;
+            color: #57606f;
+            font-weight: 500;
         }
 
         #video-viewport {
             width: 100%;
             aspect-ratio: 1/1;
-            border-radius: 25px;
+            border-radius: 30px;
             overflow: hidden;
             background: #000;
-            position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            border: 2px solid #fff;
-            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+            margin-bottom: 30px;
         }
 
         video {
@@ -79,74 +87,81 @@
             object-fit: cover;
         }
 
-        .scan-button {
-            background: var(--primary-gradient);
+        .main-button {
+            background: #121212;
             color: white;
             border: none;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 22px;
+            border-radius: 24px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             width: 100%;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.3);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
         }
 
-        .scan-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(30, 60, 114, 0.4);
+        .main-button:hover {
+            transform: scale(1.02);
+            background: #000;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        .scan-button:disabled {
-            filter: grayscale(1);
-            opacity: 0.7;
+        .main-button:disabled {
+            background: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
 
         #result-display {
-            margin-top: 25px;
+            margin-top: 30px;
             display: none;
-            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .result-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
         }
 
         .result-badge {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--accent);
-            padding: 15px 25px;
-            border-radius: 50px;
-            font-size: 22px;
-            font-weight: 700;
+            background: var(--success);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 25px;
+            font-size: 24px;
+            font-weight: 800;
             display: inline-block;
-            border: 2px solid var(--accent);
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="premium-card">
-    <div class="logo-section">
-        <h1>Ai-Derma Premium</h1>
-        <span class="status-text">
-            <span id="status-dot"></span>
-            <span id="status-label">جاري التحميل...</span>
-        </span>
+    <div class="header">
+        <h1>AI-DERMA</h1>
+        <div class="status-container">
+            <div id="status-dot"></div>
+            <span id="status-label" class="status-text">INITIALIZING...</span>
+        </div>
     </div>
 
     <div id="video-viewport">
         <video id="webcam" autoplay muted playsinline></video>
     </div>
 
-    <button id="main-btn" class="scan-button" disabled>ابدأ المسح الذكي</button>
+    <button id="scan-btn" class="main-button" disabled>START SMART SCAN</button>
 
     <div id="result-display">
-        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">الحالة المكتشفة:</div>
+        <div class="result-title">ANALYSIS COMPLETE</div>
         <div id="tag-container"></div>
     </div>
 </div>
@@ -157,7 +172,7 @@
 <script>
     (async () => {
         const video = document.querySelector('#webcam');
-        const btn = document.querySelector('#main-btn');
+        const btn = document.querySelector('#scan-btn');
         const resultDiv = document.querySelector('#result-display');
         const tagContainer = document.querySelector('#tag-container');
         const statusLabel = document.querySelector('#status-label');
@@ -168,47 +183,48 @@
             await classifier.init();
             
             const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment', width: 640, height: 640 } 
+                video: { facingMode: 'environment' } 
             });
             video.srcObject = stream;
 
-            statusLabel.textContent = "النظام جاهز للعمل";
+            statusLabel.textContent = "SYSTEM READY";
             statusDot.style.background = "#2ecc71";
+            statusDot.style.boxShadow = "0 0 10px rgba(46, 204, 113, 0.6)";
             btn.disabled = false;
 
             btn.onclick = async () => {
-                btn.textContent = "جاري التحليل الرقمي...";
+                btn.textContent = "ANALYZING...";
                 btn.disabled = true;
 
                 const features = getFeatures(video);
                 const res = classifier.classify(features);
 
                 if (res.results && res.results.length > 0) {
-                    displayPremiumResults(res.results);
+                    showResults(res.results);
                 }
 
                 btn.disabled = false;
-                btn.textContent = "مسح جديد";
+                btn.textContent = "RESCAN";
             };
 
         } catch (e) {
-            statusLabel.textContent = "خطأ في التهيئة";
-            statusDot.style.background = "#e74c3c";
+            statusLabel.textContent = "HARDWARE ERROR";
+            statusDot.style.background = "#ff4757";
         }
 
-        function displayPremiumResults(results) {
+        function showResults(results) {
             tagContainer.innerHTML = "";
             resultDiv.style.display = "block";
 
-            // فلترة لعرض النتائج القوية فقط بدون أرقام
-            const detected = results.filter(r => r.value > 0.15).sort((a,b) => b.value - a.value);
+            // Get top result only for ultra-clean look
+            const top = results.sort((a,b) => b.value - a.value)[0];
 
-            detected.forEach(item => {
+            if (top && top.value > 0.15) {
                 const badge = document.createElement('div');
                 badge.className = 'result-badge';
-                badge.textContent = item.label;
+                badge.textContent = top.label.toUpperCase();
                 tagContainer.appendChild(badge);
-            });
+            }
         }
 
         function getFeatures(v) {
