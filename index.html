@@ -3,23 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai-Derma | محلل الجلد الذكي</title>
+    <title>Ai-Derma | محلل الجلد الشامل</title>
     <style>
-        :root { --primary: #2ecc71; --dark: #2c3e50; --light: #ecf0f1; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f5f6fa; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .app-container { background: white; width: 90%; max-width: 400px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 25px; text-align: center; }
-        .header h1 { color: var(--dark); margin: 0; font-size: 24px; }
-        .header p { color: #7f8c8d; font-size: 14px; margin-top: 5px; }
-        #video-container { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 20px; overflow: hidden; margin: 20px 0; border: 5px solid #f1f3f5; }
-        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        :root { --primary: #2ecc71; --dark: #2c3e50; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .app-container { background: white; width: 95%; max-width: 450px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
+        .header h1 { color: var(--dark); margin: 0; font-size: 22px; }
+        #video-container { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 20px; overflow: hidden; margin: 15px 0; border: 4px solid #f1f3f5; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
         .btn { border: none; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-bottom: 10px; }
         .btn-scan { background: var(--primary); color: white; }
-        .btn-scan:hover { background: #27ae60; }
         .btn-scan:disabled { background: #bdc3c7; }
-        #result-card { background: #f9f9f9; padding: 15px; border-radius: 15px; display: none; margin-top: 15px; border-right: 5px solid var(--primary); }
-        .result-label { display: block; font-size: 20px; font-weight: bold; color: var(--dark); }
-        .result-conf { font-size: 14px; color: #7f8c8d; }
-        .btn-share { background: #3498db; color: white; font-size: 14px; padding: 10px; display: none; }
+        
+        /* تصميم قائمة النتائج */
+        #result-list { margin-top: 15px; text-align: right; display: none; }
+        .result-item { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 8px; border-right: 5px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .label-name { font-weight: bold; color: var(--dark); }
+        .label-percent { color: var(--primary); font-family: monospace; font-size: 16px; }
+        .status-msg { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -27,21 +28,19 @@
 <div class="app-container">
     <div class="header">
         <h1>🩺 Ai-Derma</h1>
-        <p id="status">جاري تهيئة المستشعرات...</p>
+        <div id="status" class="status-msg">جاري تحميل الموديل...</div>
     </div>
 
     <div id="video-container">
         <video id="webcam" autoplay muted playsinline></video>
     </div>
 
-    <button id="run-btn" class="btn btn-scan" disabled>انتظر قليلاً...</button>
+    <button id="run-btn" class="btn btn-scan" disabled>انتظر تحميل النظام...</button>
     
-    <div id="result-card">
-        <span class="result-label" id="label-text">تحليل الحالة...</span>
-        <span class="result-conf" id="conf-text">دقة التحليل: 0%</span>
-    </div>
+    <div id="result-list">
+        </div>
 
-    <button id="share-btn" class="btn btn-share">مشاركة النتيجة 📤</button>
+    <button id="share-btn" class="btn" style="background:#3498db; color:white; display:none; font-size:14px;">مشاركة التقرير 📤</button>
 </div>
 
 <script src="edge-impulse-standalone.js"></script>
@@ -51,69 +50,106 @@
     (async () => {
         const video = document.querySelector('#webcam');
         const runBtn = document.querySelector('#run-btn');
-        const shareBtn = document.querySelector('#share-btn');
-        const resultCard = document.querySelector('#result-card');
+        const resultList = document.querySelector('#result-list');
         const status = document.querySelector('#status');
+        const shareBtn = document.querySelector('#share-btn');
 
         try {
+            // 1. تهيئة الموديل
             const classifier = new EdgeImpulseClassifier();
             await classifier.init();
             
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            // 2. تشغيل الكاميرا
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' } 
+            });
             video.srcObject = stream;
 
             status.textContent = "النظام جاهز للفحص ✅";
             runBtn.disabled = false;
-            runBtn.textContent = "إجراء الفحص";
+            runBtn.textContent = "إجراء الفحص الشامل";
 
             runBtn.onclick = async () => {
                 runBtn.textContent = "جاري التحليل...";
                 runBtn.disabled = true;
 
+                // 3. التقاط البيانات وتحليلها
                 const features = getFeaturesFromVideo(video);
                 const res = classifier.classify(features);
 
                 if (res.results && res.results.length > 0) {
-                    const top = res.results[0]; // أعلى نتيجة
-                    
-                    resultCard.style.display = "block";
+                    displayResults(res.results);
                     shareBtn.style.display = "block";
-                    document.querySelector('#label-text').textContent = top.label;
-                    document.querySelector('#conf-text').textContent = `دقة التحليل: ${(top.value * 100).toFixed(1)}%`;
-                    
-                    // تغيير اللون حسب النتيجة (اختياري)
-                    resultCard.style.borderRightColor = top.value > 0.7 ? "#2ecc71" : "#f1c40f";
                 }
 
                 runBtn.disabled = false;
                 runBtn.textContent = "إعادة الفحص";
             };
 
-            shareBtn.onclick = () => {
-                const text = `نتائج فحص Ai-Derma: الحالة المكتشفة هي (${document.querySelector('#label-text').textContent}) بدقة ${document.querySelector('#conf-text').textContent}`;
-                if (navigator.share) {
-                    navigator.share({ title: 'Ai-Derma Result', text: text, url: window.location.href });
-                } else {
-                    alert("انسخ النتيجة: " + text);
-                }
-            };
-
         } catch (e) {
-            status.textContent = "خطأ في الاتصال بالكاميرا أو الملفات";
+            status.textContent = "خطأ: تأكد من إذن الكاميرا ووجود الملفات";
+            console.error(e);
         }
 
+        // وظيفة عرض النتائج كقائمة مرتبة
+        function displayResults(results) {
+            resultList.innerHTML = ""; // مسح النتائج القديمة
+            resultList.style.display = "block";
+
+            // ترتيب النتائج من الأعلى للأقل
+            results.sort((a, b) => b.value - a.value);
+
+            results.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                // تلوين الحافة بناءً على القوة
+                if (item.value > 0.5) div.style.borderRightColor = "#2ecc71";
+                
+                div.innerHTML = `
+                    <span class="label-name">${item.label}</span>
+                    <span class="label-percent">${(item.value * 100).toFixed(1)}%</span>
+                `;
+                resultList.appendChild(div);
+            });
+        }
+
+        // وظيفة معالجة الصورة - معدلة لضمان دقة البيانات
         function getFeaturesFromVideo(v) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 96; canvas.height = 96;
+            
+            // ملاحظة: تأكد أن الأبعاد 96x96 مطابقة لمشروعك في Edge Impulse
+            canvas.width = 96; 
+            canvas.height = 96;
             ctx.drawImage(v, 0, 0, 96, 96);
-            const d = ctx.getImageData(0, 0, 96, 96).data;
-            let f = [];
-            for (let i = 0; i < d.length; i += 4) {
-                f.push((d[i] << 16) | (d[i+1] << 8) | d[i+2]);
+            
+            const imageData = ctx.getImageData(0, 0, 96, 96).data;
+            let features = [];
+            
+            for (let i = 0; i < imageData.length; i += 4) {
+                // استخراج قيم Red, Green, Blue
+                let r = imageData[i];
+                let g = imageData[i+1];
+                let b = imageData[i+2];
+                
+                // تحويل القيم إلى التنسيق الذي يتوقعه الموديل
+                // إذا كان موديلك يستخدم Raw RGB:
+                features.push((r << 16) | (g << 8) | b);
             }
-            return f;
+            return features;
         }
+
+        shareBtn.onclick = () => {
+            let resultText = "تقرير فحص الجلد من Ai-Derma:\n";
+            document.querySelectorAll('.result-item').forEach(el => {
+                resultText += "- " + el.innerText + "\n";
+            });
+            if (navigator.share) {
+                navigator.share({ title: 'Ai-Derma Report', text: resultText });
+            } else {
+                alert(resultText);
+            }
+        };
     })();
 </script>
 
